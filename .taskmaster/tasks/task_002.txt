@@ -1,0 +1,11 @@
+# Task ID: 2
+# Title: Implement Telegram Bot Interface
+# Status: pending
+# Dependencies: 1
+# Priority: medium
+# Description: Develop the interface for receiving photos from users via Telegram using aiogram.
+# Details:
+Use aiogram to set up a Telegram bot that can receive messages and photos from users. Implement handlers for photo messages. Ensure the bot can respond to basic commands and acknowledgments.
+
+# Test Strategy:
+Test by sending various photos and messages to the bot and verifying that they are correctly received and acknowledged.

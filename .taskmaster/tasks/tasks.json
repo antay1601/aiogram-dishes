@@ -1,0 +1,139 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Environment",
+        "description": "Initialize the project environment using VS Code and uv package manager.",
+        "details": "Create a new project directory and initialize a Git repository. Use VS Code as the IDE. Install Python 3.11+ and ensure it's set up correctly. Initialize the project with uv package manager by running `uv init`. Add necessary dependencies like aiogram and jinja2 using `uv add aiogram jinja2`.",
+        "testStrategy": "Verify that the environment is correctly set up by running a simple Python script using `uv run`.",
+        "priority": "medium",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Telegram Bot Interface",
+        "description": "Develop the interface for receiving photos from users via Telegram using aiogram.",
+        "details": "Use aiogram to set up a Telegram bot that can receive messages and photos from users. Implement handlers for photo messages. Ensure the bot can respond to basic commands and acknowledgments.",
+        "testStrategy": "Test by sending various photos and messages to the bot and verifying that they are correctly received and acknowledged.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Integrate OCR Functionality",
+        "description": "Implement OCR to recognize text from received images.",
+        "details": "Use an OCR library like Tesseract to extract text from images. Ensure the OCR process is triggered upon receiving a photo. Handle exceptions for unreadable text or unsupported languages.",
+        "testStrategy": "Test with images containing text in various languages except Russian. Verify that text is accurately extracted or appropriate errors are returned.",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Detect Language of Extracted Text",
+        "description": "Implement language detection for the extracted text to ensure it's not in Russian.",
+        "details": "Use a language detection library to determine the language of the extracted text. If the text is in Russian, return an error message to the user.",
+        "testStrategy": "Test with text in multiple languages, including Russian, to ensure correct language detection and error handling.",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Translate Text to Russian",
+        "description": "Translate the extracted text to Russian using Gemini 2.5 Pro.",
+        "details": "Integrate Gemini 2.5 Pro to translate the text from the detected language to Russian. Ensure the translation is accurate and handle any translation errors gracefully.",
+        "testStrategy": "Test translations with text in various languages and verify the accuracy of the Russian output.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Classify Menu Items",
+        "description": "Classify translated text into dishes and drinks using Gemini 2.5 Pro.",
+        "details": "Use Gemini 2.5 Pro to classify the translated text into categories such as dishes and drinks. Ensure the classification is accurate and handle any classification errors.",
+        "testStrategy": "Test with various menu texts to ensure correct classification into dishes and drinks.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Generate Ingredients List and Analyze for Milk/Gluten",
+        "description": "For each dish, generate a list of ingredients and analyze for the presence of milk and gluten.",
+        "details": "Use Gemini 2.5 Pro to generate ingredients for each dish and analyze them for milk and gluten content. Return results as yes/no/unknown for each dish.",
+        "testStrategy": "Test with various dish descriptions to ensure accurate ingredient generation and correct analysis for milk and gluten.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Generate HTML Document",
+        "description": "Create an HTML document with the translated and formatted menu.",
+        "details": "Use Jinja2 to generate an HTML document that displays the translated menu. Format the menu with categories and use icons for milk and gluten indicators.",
+        "testStrategy": "Verify the HTML output for correct formatting, readability, and inclusion of all necessary information.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Send HTML Document to User",
+        "description": "Implement functionality to send the generated HTML document back to the user via Telegram.",
+        "details": "Use aiogram to send the generated HTML file to the user. Ensure the file is correctly formatted and sent as a downloadable document.",
+        "testStrategy": "Test by sending the HTML document to the user and verifying receipt and correctness of the document.",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Error Handling and Validation",
+        "description": "Implement comprehensive error handling and validation throughout the bot's processes.",
+        "details": "Ensure all processes have appropriate error handling, especially for OCR, translation, and classification. Validate inputs and outputs at each stage to ensure robustness.",
+        "testStrategy": "Test with various edge cases and invalid inputs to ensure errors are handled gracefully and informative messages are returned to the user.",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-28T06:55:44.766Z",
+      "updated": "2025-07-28T06:55:44.766Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

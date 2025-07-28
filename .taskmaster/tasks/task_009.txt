@@ -1,0 +1,11 @@
+# Task ID: 9
+# Title: Send HTML Document to User
+# Status: pending
+# Dependencies: 8
+# Priority: medium
+# Description: Implement functionality to send the generated HTML document back to the user via Telegram.
+# Details:
+Use aiogram to send the generated HTML file to the user. Ensure the file is correctly formatted and sent as a downloadable document.
+
+# Test Strategy:
+Test by sending the HTML document to the user and verifying receipt and correctness of the document.

@@ -1,0 +1,11 @@
+# Task ID: 4
+# Title: Detect Language of Extracted Text
+# Status: pending
+# Dependencies: 3
+# Priority: medium
+# Description: Implement language detection for the extracted text to ensure it's not in Russian.
+# Details:
+Use a language detection library to determine the language of the extracted text. If the text is in Russian, return an error message to the user.
+
+# Test Strategy:
+Test with text in multiple languages, including Russian, to ensure correct language detection and error handling.

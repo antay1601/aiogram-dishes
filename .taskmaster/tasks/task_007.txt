@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Generate Ingredients List and Analyze for Milk/Gluten
+# Status: pending
+# Dependencies: 6
+# Priority: medium
+# Description: For each dish, generate a list of ingredients and analyze for the presence of milk and gluten.
+# Details:
+Use Gemini 2.5 Pro to generate ingredients for each dish and analyze them for milk and gluten content. Return results as yes/no/unknown for each dish.
+
+# Test Strategy:
+Test with various dish descriptions to ensure accurate ingredient generation and correct analysis for milk and gluten.

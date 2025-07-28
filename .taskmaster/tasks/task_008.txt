@@ -1,0 +1,11 @@
+# Task ID: 8
+# Title: Generate HTML Document
+# Status: pending
+# Dependencies: 7
+# Priority: medium
+# Description: Create an HTML document with the translated and formatted menu.
+# Details:
+Use Jinja2 to generate an HTML document that displays the translated menu. Format the menu with categories and use icons for milk and gluten indicators.
+
+# Test Strategy:
+Verify the HTML output for correct formatting, readability, and inclusion of all necessary information.

@@ -1,0 +1,11 @@
+# Task ID: 1
+# Title: Setup Project Environment
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Initialize the project environment using VS Code and uv package manager.
+# Details:
+Create a new project directory and initialize a Git repository. Use VS Code as the IDE. Install Python 3.11+ and ensure it's set up correctly. Initialize the project with uv package manager by running `uv init`. Add necessary dependencies like aiogram and jinja2 using `uv add aiogram jinja2`.
+
+# Test Strategy:
+Verify that the environment is correctly set up by running a simple Python script using `uv run`.

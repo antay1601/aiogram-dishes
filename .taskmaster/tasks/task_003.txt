@@ -1,0 +1,11 @@
+# Task ID: 3
+# Title: Integrate OCR Functionality
+# Status: pending
+# Dependencies: 2
+# Priority: medium
+# Description: Implement OCR to recognize text from received images.
+# Details:
+Use an OCR library like Tesseract to extract text from images. Ensure the OCR process is triggered upon receiving a photo. Handle exceptions for unreadable text or unsupported languages.
+
+# Test Strategy:
+Test with images containing text in various languages except Russian. Verify that text is accurately extracted or appropriate errors are returned.
