@@ -1,0 +1,51 @@
+# Task ID: 4
+# Title: Реализация определения языка и перевода текста
+# Status: pending
+# Dependencies: 1, 3
+# Priority: high
+# Description: Создание модуля для определения языка исходного текста и его перевода на русский язык с использованием Google Gemini API.
+# Details:
+1. Создать файл translator.py для определения языка и перевода:
+```python
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+
+# Настройка Gemini API
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash-preview-image-generation')
+
+async def detect_language(text):
+    """
+    Определяет язык текста с помощью Gemini API
+    """
+    try:
+        prompt = f"Determine the language of the following text. Return only the ISO 639-1 language code (e.g., 'en', 'fr', 'de', etc.):\n\n{text}"
+        
+        response = model.generate_content(prompt)
+        language_code = response.text.strip().lower()
+        
+        return language_code
+    except Exception as e:
+        print(f"Error in language detection: {str(e)}")
+        return None
+
+async def translate_text(text, source_language):
+    """
+    Переводит текст на русский язык с помощью Gemini API
+    """
+    try:
+        prompt = f"Translate the following {source_language} text to Russian. Preserve the structure and formatting of the original text:\n\n{text}"
+        
+        response = model.generate_content(prompt)
+        translated_text = response.text.strip()
+        
+        return translated_text
+    except Exception as e:
+        print(f"Error in translation: {str(e)}")
+        return None
+```
+
+# Test Strategy:
+1. Проверить определение различных языков (английский, французский, итальянский и т.д.).
+2. Проверить корректность перевода текстов меню на русский язык.
+3. Проверить обработку ошибок при некорректных входных данных.

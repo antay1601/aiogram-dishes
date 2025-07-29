@@ -1,0 +1,199 @@
+# Task ID: 6
+# Title: Реализация генерации HTML-страницы с меню
+# Status: pending
+# Dependencies: 5
+# Priority: medium
+# Description: Создание модуля для генерации HTML-документа с отформатированным, переведённым меню, включая изображения блюд и информацию о наличии молока и глютена.
+# Details:
+1. Создать файл html_generator.py для генерации HTML-страницы:
+```python
+import os
+import base64
+from menu_processor import generate_dish_image
+
+async def generate_html(menu_data, output_path):
+    """
+    Генерирует HTML-страницу с переведенным меню
+    """
+    try:
+        # Начало HTML-документа
+        html = """
+        <!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Переведенное меню</title>
+            <style>
+                body {
+                    font-family: 'Arial', sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #f9f9f9;
+                }
+                h1 {
+                    text-align: center;
+                    color: #333;
+                    border-bottom: 2px solid #ddd;
+                    padding-bottom: 10px;
+                }
+                h2 {
+                    color: #5a5a5a;
+                    margin-top: 30px;
+                    border-bottom: 1px solid #eee;
+                    padding-bottom: 5px;
+                }
+                .menu-item {
+                    margin-bottom: 20px;
+                    padding: 15px;
+                    background-color: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    display: flex;
+                    flex-direction: row;
+                }
+                .menu-item-content {
+                    flex: 1;
+                }
+                .menu-item-image {
+                    width: 150px;
+                    height: 150px;
+                    margin-left: 15px;
+                    object-fit: cover;
+                    border-radius: 5px;
+                }
+                .menu-item h3 {
+                    margin-top: 0;
+                    color: #333;
+                }
+                .menu-item p {
+                    margin: 5px 0;
+                    color: #666;
+                }
+                .ingredients {
+                    font-style: italic;
+                    color: #888;
+                }
+                .allergens {
+                    margin-top: 10px;
+                }
+                .allergen {
+                    display: inline-block;
+                    margin-right: 10px;
+                    font-size: 0.9em;
+                }
+                .yes {
+                    color: #d9534f;
+                }
+                .no {
+                    color: #5cb85c;
+                }
+                .unknown {
+                    color: #f0ad4e;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Переведенное меню</h1>
+        """
+        
+        # Проверяем наличие категорий
+        if "categories" in menu_data:
+            for category in menu_data["categories"]:
+                html += f"<h2>{category['name']}</h2>\n"
+                
+                for item in category["items"]:
+                    html += "<div class='menu-item'>\n"
+                    html += "<div class='menu-item-content'>\n"
+                    html += f"<h3>{item['name']}</h3>\n"
+                    
+                    # Если это блюдо (не напиток), добавляем описание и ингредиенты
+                    if item.get("type") == "блюдо":
+                        if "description" in item and item["description"]:
+                            html += f"<p>{item['description']}</p>\n"
+                        
+                        if "ingredients" in item and item["ingredients"]:
+                            ingredients_str = ", ".join(item["ingredients"])
+                            html += f"<p class='ingredients'><strong>Состав:</strong> {ingredients_str}</p>\n"
+                        
+                        # Информация о молоке и глютене
+                        html += "<div class='allergens'>\n"
+                        
+                        milk_status = item.get("contains_milk", "неизвестно")
+                        milk_class = "yes" if milk_status == "да" else "no" if milk_status == "нет" else "unknown"
+                        html += f"<span class='allergen {milk_class}'>🥛 Молоко: {milk_status}</span>\n"
+                        
+                        gluten_status = item.get("contains_gluten", "неизвестно")
+                        gluten_class = "yes" if gluten_status == "да" else "no" if gluten_status == "нет" else "unknown"
+                        html += f"<span class='allergen {gluten_class}'>🌾 Глютен: {gluten_status}</span>\n"
+                        
+                        html += "</div>\n"
+                    
+                    html += "</div>\n"
+                    
+                    # Генерируем изображение для блюда (не для напитков)
+                    if item.get("type") == "блюдо":
+                        try:
+                            # Генерируем изображение
+                            image_data = await generate_dish_image(item['name'], item.get('description', ''))
+                            
+                            if image_data:
+                                # Получаем данные изображения и кодируем в base64
+                                mime_type = image_data.mime_type
+                                data = base64.b64encode(image_data.data).decode('utf-8')
+                                img_src = f"data:{mime_type};base64,{data}"
+                                html += f"<img class='menu-item-image' src='{img_src}' alt='{item['name']}'>\n"
+                        except Exception as e:
+                            print(f"Error generating image for {item['name']}: {str(e)}")
+                    
+                    html += "</div>\n"
+        else:
+            # Если структура не соответствует ожидаемой, выводим сырой ответ
+            html += "<p>Не удалось обработать меню в ожидаемом формате.</p>"
+            if "error" in menu_data:
+                html += f"<p>Ошибка: {menu_data['error']}</p>"
+            if "raw_response" in menu_data:
+                html += f"<pre>{menu_data['raw_response']}</pre>"
+        
+        # Завершение HTML-документа
+        html += """
+        </body>
+        </html>
+        """
+        
+        # Записываем HTML в файл
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html)
+        
+        return output_path
+    except Exception as e:
+        print(f"Error in HTML generation: {str(e)}")
+        
+        # В случае ошибки создаем простой HTML с сообщением об ошибке
+        error_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Ошибка</title>
+        </head>
+        <body>
+            <h1>Произошла ошибка при генерации HTML</h1>
+            <p>{str(e)}</p>
+        </body>
+        </html>
+        """
+        
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(error_html)
+        
+        return output_path
+```
+
+# Test Strategy:
+1. Проверить генерацию HTML-страницы с различными типами меню.
+2. Проверить корректность отображения блюд, напитков, описаний и ингредиентов.
+3. Проверить отображение информации о наличии молока и глютена.
+4. Проверить корректность отображения изображений блюд.
+5. Проверить обработку ошибок при некорректных входных данных.

@@ -1,0 +1,62 @@
+# Task ID: 1
+# Title: Настройка проекта и базовая структура бота
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Создание базовой структуры проекта, установка необходимых зависимостей и настройка Telegram-бота с использованием aiogram.
+# Details:
+1. Создать структуру проекта:
+```
+/aiogram-dishes
+  /src
+    __init__.py
+    bot.py
+    config.py
+    handlers.py
+    ocr.py
+    translator.py
+    menu_processor.py
+    html_generator.py
+  .gitignore
+  .python-version
+  pyproject.toml
+  README.md
+```
+2. Установить зависимости с помощью uv:
+```bash
+uv add aiogram python-dotenv
+```
+3. Создать файл config.py для хранения конфигурационных данных:
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+```
+4. Создать базовую структуру бота в bot.py:
+```python
+from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
+from config import BOT_TOKEN
+
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher()
+
+async def main():
+    await dp.start_polling(bot)
+
+if __name__ == '__main__':
+    import asyncio
+    from handlers import register_handlers
+    
+    register_handlers(dp)
+    asyncio.run(main())
+```
+
+# Test Strategy:
+1. Проверить успешную инициализацию проекта и установку зависимостей.
+2. Запустить бота и убедиться, что он подключается к Telegram API.
+3. Проверить структуру проекта на соответствие требованиям.

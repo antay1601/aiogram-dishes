@@ -1,0 +1,50 @@
+# Task ID: 3
+# Title: Реализация OCR для распознавания текста с изображения
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Создание модуля для распознавания текста с фотографии меню с использованием Google Gemini API.
+# Details:
+1. Создать файл ocr.py для распознавания текста:
+```python
+import os
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+
+# Настройка Gemini API
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash-preview-image-generation')
+
+async def extract_text_from_image(image_path):
+    """
+    Извлекает текст из изображения с помощью Gemini API
+    """
+    try:
+        # Загружаем изображение
+        with open(image_path, 'rb') as f:
+            image_data = f.read()
+        
+        # Создаем запрос к модели
+        prompt = "Extract all text from this menu image. Return only the extracted text without any additional comments."
+        
+        # Отправляем запрос с изображением
+        response = model.generate_content(
+            [
+                prompt,
+                {"mime_type": "image/jpeg", "data": image_data}
+            ]
+        )
+        
+        # Получаем результат
+        extracted_text = response.text
+        
+        return extracted_text.strip()
+    except Exception as e:
+        print(f"Error in OCR: {str(e)}")
+        return None
+```
+
+# Test Strategy:
+1. Проверить распознавание текста на различных изображениях меню.
+2. Проверить обработку ошибок при некачественных изображениях.
+3. Проверить корректность работы с API Gemini.

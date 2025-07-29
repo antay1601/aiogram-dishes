@@ -1,0 +1,146 @@
+# Task ID: 5
+# Title: Реализация обработки и классификации меню
+# Status: pending
+# Dependencies: 1, 4
+# Priority: high
+# Description: Создание модуля для классификации элементов меню на блюда и напитки, генерации описаний, определения ингредиентов и анализа на наличие молока и глютена.
+# Details:
+1. Создать файл menu_processor.py для обработки меню:
+```python
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+from translator import translate_text
+
+# Настройка Gemini API
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash-preview-image-generation')
+
+async def process_menu(text, source_language):
+    """
+    Обрабатывает текст меню: переводит, классифицирует, генерирует описания и анализирует состав
+    """
+    try:
+        # Переводим текст на русский
+        translated_text = await translate_text(text, source_language)
+        
+        # Формируем запрос для обработки меню
+        prompt = f"""
+        Проанализируй следующее меню на русском языке и выполни следующие задачи:
+        
+        1. Классифицируй каждый элемент меню как 'блюдо' или 'напиток'.
+        2. Для каждого блюда (не напитка):
+
+           - Сгенерируй краткое описание блюда на основе его названия
+
+           - Составь список основных ингредиентов
+
+           - Определи, содержит ли блюдо молоко (да/нет/неизвестно)
+
+           - Определи, содержит ли блюдо глютен (да/нет/неизвестно)
+
+        3. Сгруппируй элементы по категориям (закуски, основные блюда, десерты, напитки и т.д.)
+
+        
+        Верни результат в формате JSON со следующей структурой:
+        {{
+            "categories": [
+                {{
+                    "name": "Название категории",
+                    "items": [
+                        {{
+                            "name": "Название блюда/напитка",
+                            "type": "блюдо/напиток",
+                            "description": "Описание (только для блюд)",
+                            "ingredients": ["ингредиент1", "ингредиент2", ...] (только для блюд),
+                            "contains_milk": "да/нет/неизвестно" (только для блюд),
+                            "contains_gluten": "да/нет/неизвестно" (только для блюд)
+                        }}
+                    ]
+                }}
+            ]
+        }}
+        
+        Меню:
+        {translated_text}
+        """
+        
+        response = model.generate_content(prompt)
+        
+        # Предполагаем, что ответ содержит JSON
+        
+        import json
+        
+        try:
+            
+            # Извлекаем JSON из ответа
+            
+            json_str = response.text
+            
+            # Находим начало и конец JSON
+            
+            start_idx = json_str.find('{')
+            
+            end_idx = json_str.rfind('}')
+            
+            if start_idx != -1 and end_idx != -1:
+                
+                json_str = json_str[start_idx:end_idx+1]
+            
+            processed_menu = json.loads(json_str)
+            
+            return processed_menu
+        
+        except json.JSONDecodeError:
+            
+            # Если не удалось распарсить JSON, возвращаем текст как есть
+            
+            return {"error": "Failed to parse menu", "raw_response": response.text}
+    
+    except Exception as e:
+        
+        print(f"Error in menu processing: {str(e)}")
+        
+        return {"error": str(e)}
+
+
+async def generate_dish_image(dish_name, description):
+    """
+    Генерирует изображение блюда на основе его названия и описания
+    """
+    try:
+        prompt = f"Generate a realistic, appetizing image of the dish: {dish_name}. {description}"
+        
+        response = model.generate_content(prompt, stream=True)
+        response.resolve()
+        
+        # Извлекаем изображение из ответа
+        
+        for part in response.parts:
+            
+            if hasattr(part, 'parts') and part.parts:
+                
+                for inner_part in part.parts:
+                    
+                    if inner_part.text:
+                        
+                        continue
+                    
+                    if hasattr(inner_part, 'inline_data') and inner_part.inline_data:
+                        
+                        return inner_part.inline_data
+        
+        return None
+    
+    except Exception as e:
+        
+        print(f"Error in image generation: {str(e)}")
+        
+        return None
+```
+
+# Test Strategy:
+1. Проверить классификацию различных элементов меню на блюда и напитки.
+2. Проверить генерацию описаний блюд и определение ингредиентов.
+3. Проверить анализ на наличие молока и глютена.
+4. Проверить группировку элементов по категориям.
+5. Проверить генерацию изображений блюд.

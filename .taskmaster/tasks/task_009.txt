@@ -1,0 +1,285 @@
+# Task ID: 9
+# Title: Улучшение дизайна HTML-страницы и добавление интерактивных элементов
+# Status: pending
+# Dependencies: 6
+# Priority: low
+# Description: Улучшение дизайна HTML-страницы с меню, добавление интерактивных элементов и адаптивности для различных устройств.
+# Details:
+1. Обновить CSS-стили в функции generate_html:
+```css
+body {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    font-weight: 300;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #3498db;
+    margin-top: 40px;
+    border-bottom: 1px solid #ecf0f1;
+    padding-bottom: 10px;
+    font-weight: 400;
+    font-size: 1.8em;
+}
+
+.menu-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.menu-item-content {
+    flex: 1;
+}
+
+.menu-item-image {
+    width: 180px;
+    height: 180px;
+    margin-left: 20px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.menu-item-image:hover {
+    transform: scale(1.05);
+}
+
+.menu-item h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 1.4em;
+    font-weight: 500;
+}
+
+.menu-item p {
+    margin: 10px 0;
+    color: #555;
+}
+
+.ingredients {
+    font-style: italic;
+    color: #7f8c8d;
+    margin: 12px 0;
+}
+
+.allergens {
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+}
+
+.allergen {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.yes {
+    background-color: #ffebee;
+    color: #e53935;
+}
+
+.no {
+    background-color: #e8f5e9;
+    color: #43a047;
+}
+
+.unknown {
+    background-color: #fff8e1;
+    color: #ffb300;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 600px) {
+    .menu-item {
+        flex-direction: column;
+    }
+    
+    .menu-item-image {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 15px;
+    }
+    
+    .allergens {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+```
+
+2. Добавить интерактивные элементы с JavaScript:
+```javascript
+// Добавить в head HTML-документа
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Фильтрация по категориям
+    const categories = document.querySelectorAll('h2');
+    const filterContainer = document.createElement('div');
+    filterContainer.className = 'filter-container';
+    filterContainer.innerHTML = '<h3>Фильтр по категориям:</h3>';
+    
+    const allButton = document.createElement('button');
+    allButton.textContent = 'Все';
+    allButton.className = 'filter-btn active';
+    allButton.onclick = function() {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('h2, .menu-item').forEach(el => el.style.display = '');
+    };
+    filterContainer.appendChild(allButton);
+    
+    categories.forEach(category => {
+        const button = document.createElement('button');
+        button.textContent = category.textContent;
+        button.className = 'filter-btn';
+        button.onclick = function() {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            document.querySelectorAll('h2, .menu-item').forEach(el => el.style.display = 'none');
+            category.style.display = '';
+            
+            const items = [];
+            let current = category.nextElementSibling;
+            while(current && current.tagName !== 'H2') {
+                if(current.classList.contains('menu-item')) {
+                    current.style.display = '';
+                }
+                current = current.nextElementSibling;
+            }
+        };
+        filterContainer.appendChild(button);
+    });
+    
+    // Фильтр по аллергенам
+    const allergenFilter = document.createElement('div');
+    allergenFilter.className = 'allergen-filter';
+    allergenFilter.innerHTML = `
+        <h3>Фильтр по аллергенам:</h3>
+        <label><input type="checkbox" id="milk-free"> Без молока</label>
+        <label><input type="checkbox" id="gluten-free"> Без глютена</label>
+    `;
+    
+    filterContainer.appendChild(allergenFilter);
+    document.querySelector('h1').after(filterContainer);
+    
+    // Обработчики для фильтров по аллергенам
+    document.getElementById('milk-free').addEventListener('change', filterItems);
+    document.getElementById('gluten-free').addEventListener('change', filterItems);
+    
+    function filterItems() {
+        const milkFree = document.getElementById('milk-free').checked;
+        const glutenFree = document.getElementById('gluten-free').checked;
+        
+        document.querySelectorAll('.menu-item').forEach(item => {
+            let show = true;
+            
+            if(milkFree) {
+                const milkStatus = item.querySelector('.allergen:nth-child(1)');
+                if(milkStatus && milkStatus.textContent.includes('да')) {
+                    show = false;
+                }
+            }
+            
+            if(glutenFree && show) {
+                const glutenStatus = item.querySelector('.allergen:nth-child(2)');
+                if(glutenStatus && glutenStatus.textContent.includes('да')) {
+                    show = false;
+                }
+            }
+            
+            item.style.display = show ? '' : 'none';
+        });
+    }
+});
+</script>
+
+<style>
+.filter-container {
+    margin: 20px 0 30px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.filter-container h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.filter-btn {
+    margin: 5px;
+    padding: 8px 15px;
+    background-color: #ecf0f1;
+    border: none;
+    border-radius: 20px;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+.filter-btn.active {
+    background-color: #2980b9;
+    color: white;
+}
+
+.allergen-filter {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.allergen-filter label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+</style>
+```
+
+3. Обновить функцию generate_html для включения JavaScript и новых стилей.
+
+# Test Strategy:
+1. Проверить корректность отображения HTML-страницы на различных устройствах (десктоп, планшет, мобильный).
+2. Проверить работу интерактивных элементов: фильтрация по категориям и аллергенам.
+3. Проверить анимации и эффекты при наведении.
+4. Проверить корректность отображения в различных браузерах (Chrome, Firefox, Safari).
