@@ -1,0 +1,5 @@
+aiogram>=3.21.0
+genai>=2.1.0
+google-auth>=2.40.3
+python-dotenv>=1.1.1
+requests>=2.32.4

@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+src/__init__.py
+src/bot.py
+src/config.py
+src/handlers.py
+src/html_generator.py
+src/menu_processor.py
+src/ocr.py
+src/translator.py
+src/aiogram_dishes.egg-info/PKG-INFO
+src/aiogram_dishes.egg-info/SOURCES.txt
+src/aiogram_dishes.egg-info/dependency_links.txt
+src/aiogram_dishes.egg-info/requires.txt
+src/aiogram_dishes.egg-info/top_level.txt

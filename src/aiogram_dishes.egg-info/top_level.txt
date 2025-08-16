@@ -1,0 +1,8 @@
+__init__
+bot
+config
+handlers
+html_generator
+menu_processor
+ocr
+translator
